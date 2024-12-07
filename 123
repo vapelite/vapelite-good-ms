@@ -542,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1.24 / ((first or store.hand.Type == 'sword') and 24.24 or AutoClickerCPS.Value))
+                            task.wait(1.23 / ((first or store.hand.Type == 'sword') and 24.24 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if not isNotHoveringOverGui() then continue end
