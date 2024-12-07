@@ -654,7 +654,7 @@ run(function()
                 local VelocityVertical = {Value = 100}
                 local VelocityChance = {Value = 100}
                 local VelocityDelayValue = {Value = 100}
-                local VelocityDelay = {Enabled = true}
+                local VelocityDelay = {Enabled = false}
                 local VelocityTargeting = {Enabled = false}
                 local velorand = Random.new()
                 local applyKnockback
@@ -668,8 +668,8 @@ run(function()
                                 if velorand:NextNumber(0, 100) > VelocityChance.Value then return end
                                 knockback = knockback or {}
                                 if VelocityHorizontal.Value == 0 and VelocityVertical.Value == 0 then return end
-                                knockback.horizontal = (knockback.horizontal or 1) * (VelocityHorizontal.Value / 100)
-                                knockback.vertical = (knockback.vertical or 1) * (VelocityVertical.Value / 100)
+                                knockback.horizontal = (knockback.horizontal or 1) * 0.5 (VelocityHorizontal.Value / 100)
+                                knockback.vertical = (knockback.vertical or 1) * 0.5 (VelocityVertical.Value / 100)
                                 return applyKnockback(root, mass, dir, knockback, ...)
                             end
                         else
