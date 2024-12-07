@@ -507,8 +507,8 @@ run(function()
                 AimAssistRange = AimAssist:CreateSlider({
                     Name = 'Range',
                     Min = 1,
-                    Max = 50,
-                    Default = 30
+                    Max = 30,
+                    Default = 50
                 })
                 AimAssistSmoothness = AimAssist:CreateSlider({
                     Name = 'Smoothness',
@@ -542,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1 / ((first or store.hand.Type == 'sword') and 13.8 or 13.4 or AutoClickerCPS.Value))
+                            task.wait(1 / ((first or store.hand.Type == 'sword') and 13.8 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if not isNotHoveringOverGui() then continue end
@@ -653,8 +653,8 @@ run(function()
                 local VelocityHorizontal = {Value = 100}
                 local VelocityVertical = {Value = 100}
                 local VelocityChance = {Value = 100}
-                local VelocityDelayValue = {Value = 0}
-                local VelocityDelay = {Enabled = false}
+                local VelocityDelayValue = {Value = 50}
+                local VelocityDelay = {Enabled = true}
                 local VelocityTargeting = {Enabled = false}
                 local velorand = Random.new()
                 local applyKnockback
