@@ -581,25 +581,17 @@ run(function()
                         end
                     end,
                     Tooltip = 'Hold attack button to automatically click'
-                                AutoClickerCPS = AutoClicker:CreateSlider({
+                })
+                AutoClickerCPS = AutoClicker:CreateSlider({
                     Name = 'CPS',
                     Min = 1,
                     Max = 500000000,
                     Default = 12
                 })
-
-                SwordSwingSpeed = AutoClicker:CreateSlider({
-                    Name = 'Sword Speed',
-                    Min = 1,
-                    Max = 100,
-                    Default = 24
-                })
-
                 AutoClickerBlocks = AutoClicker:CreateToggle({
                     Name = 'Place Blocks',
                     Default = true
                 })
-
             end)
 
             run(function()
