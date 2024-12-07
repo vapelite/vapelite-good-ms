@@ -537,74 +537,70 @@ run(function()
                     return true
                 end
 
-               local function AutoClick()
-    if AutoClickerThread then task.cancel(AutoClickerThread) end
-    AutoClickerThread = task.spawn(function()
-        local first = true
-        repeat
-            -- Adjust delay based on sword or AutoClicker CPS
-            task.wait(2 / ((store.hand.Type == 'sword' and SwordSwingSpeed.Value) or AutoClickerCPS.Value))
-            first = false
-            if not AutoClicker.Enabled then break end
-            if not isNotHoveringOverGui() then continue end
-            if bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then continue end
-            if store.hand.Type == 'block' and AutoClickerBlocks.Enabled and bedwars.BlockPlacementController.blockPlacer then
-                if (workspace:GetServerTimeNow() - bedwars.BlockCpsController.lastPlaceTimestamp) >= ((1 / 12) * 0.5) then
-                    local mouseinfo = bedwars.BlockPlacementController.blockPlacer.clientManager:getBlockSelector():getMouseInfo(0)
-                    if mouseinfo then
-                        task.spawn(function()
-                            if mouseinfo.placementPosition == mouseinfo.placementPosition then
-                                bedwars.BlockPlacementController.blockPlacer:placeBlock(mouseinfo.placementPosition)
+                local function AutoClick()
+                    if AutoClickerThread then task.cancel(AutoClickerThread) end
+                    AutoClickerThread = task.spawn(function()
+                        local first = true
+                        repeat
+                            task.wait(2 / ((first or store.hand.Type == 'sword') and 48.48 or AutoClickerCPS.Value))
+                            first = false
+                            if not AutoClicker.Enabled then break end
+                            if not isNotHoveringOverGui() then continue end
+                            if bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then continue end
+                            if store.hand.Type == 'block' and AutoClickerBlocks.Enabled and bedwars.BlockPlacementController.blockPlacer then
+                                if (workspace:GetServerTimeNow() - bedwars.BlockCpsController.lastPlaceTimestamp) >= ((1 / 12) * 0.5) then
+                                    local mouseinfo = bedwars.BlockPlacementController.blockPlacer.clientManager:getBlockSelector():getMouseInfo(0)
+                                    if mouseinfo then
+                                        task.spawn(function()
+                                            if mouseinfo.placementPosition == mouseinfo.placementPosition then
+                                                bedwars.BlockPlacementController.blockPlacer:placeBlock(mouseinfo.placementPosition)
+                                            end
+                                        end)
+                                    end
+                                end
+                            elseif store.hand.Type == 'sword' and bedwars.DaoController.chargingMaid == nil then
+                                bedwars.SwordController:swingSwordAtMouse()
                             end
-                        end)
-                    end
+                        until false
+                    end)
                 end
-            elseif store.hand.Type == 'sword' and bedwars.DaoController.chargingMaid == nil then
-                bedwars.SwordController:swingSwordAtMouse()
-            end
-        until false
-    end)
-end
 
-AutoClicker = vapelite:CreateModule({
-    Name = 'AutoClicker',
-    Function = function(callback)
-        if callback then
-            table.insert(AutoClicker.Connections, inputService.InputBegan:Connect(function(input, gameProcessed)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then AutoClick() end
-            end))
-            table.insert(AutoClicker.Connections, inputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 and AutoClickerThread then
-                    task.cancel(AutoClickerThread)
-                    AutoClickerThread = nil
-                end
-            end))
-        end
-    end,
-    Tooltip = 'Hold attack button to automatically click'
-})
+                AutoClicker = vapelite:CreateModule({
+                    Name = 'AutoClicker',
+                    Function = function(callback)
+                        if callback then
+                            table.insert(AutoClicker.Connections, inputService.InputBegan:Connect(function(input, gameProcessed)
+                                if input.UserInputType == Enum.UserInputType.MouseButton1 then AutoClick() end
+                            end))
+                            table.insert(AutoClicker.Connections, inputService.InputEnded:Connect(function(input)
+                                if input.UserInputType == Enum.UserInputType.MouseButton1 and AutoClickerThread then
+                                    task.cancel(AutoClickerThread)
+                                    AutoClickerThread = nil
+                                end
+                            end))
+                        end
+                    end,
+                    Tooltip = 'Hold attack button to automatically click'
+                                AutoClickerCPS = AutoClicker:CreateSlider({
+                    Name = 'CPS',
+                    Min = 1,
+                    Max = 500000000,
+                    Default = 12
+                })
 
--- Add the CPS slider for general AutoClicker
-AutoClickerCPS = AutoClicker:CreateSlider({
-    Name = 'CPS',
-    Min = 1,
-    Max = 500000000,
-    Default = 12
-})
+                SwordSwingSpeed = AutoClicker:CreateSlider({
+                    Name = 'Sword Speed',
+                    Min = 1,
+                    Max = 100,
+                    Default = 24
+                })
 
--- Add the new Sword Speed slider
-SwordSwingSpeed = AutoClicker:CreateSlider({
-    Name = 'Sword Speed',
-    Min = 1,
-    Max = 100, -- Adjust this to suit your game's limits
-    Default = 24
-})
+                AutoClickerBlocks = AutoClicker:CreateToggle({
+                    Name = 'Place Blocks',
+                    Default = true
+                })
 
--- Add the toggle for block placement
-AutoClickerBlocks = AutoClicker:CreateToggle({
-    Name = 'Place Blocks',
-    Default = true
-})
+            end)
 
             run(function()
                 local Reach = {Enabled = false}
