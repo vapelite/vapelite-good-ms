@@ -479,7 +479,7 @@ run(function()
 
             run(function()
                 local AimAssist = {Enabled = false}
-                local AimAssistRange = {Value = 30}
+                local AimAssistRange = {Value = 50}
                 local AimAssistSmoothness = {Value = 1}
                 local AimAssistActive = {Enabled = false}
                 local AimAssistVertical = {Enabled = true}
@@ -653,7 +653,7 @@ run(function()
                 local VelocityHorizontal = {Value = 100}
                 local VelocityVertical = {Value = 100}
                 local VelocityChance = {Value = 100}
-                local VelocityDelayValue = {Value = 50}
+                local VelocityDelayValue = {Value = 100}
                 local VelocityDelay = {Enabled = true}
                 local VelocityTargeting = {Enabled = false}
                 local velorand = Random.new()
