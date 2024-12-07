@@ -479,7 +479,7 @@ run(function()
 
             run(function()
                 local AimAssist = {Enabled = false}
-                local AimAssistRange = {Value = 50}
+                local AimAssistRange = {Value = 30}
                 local AimAssistSmoothness = {Value = 1}
                 local AimAssistActive = {Enabled = false}
                 local AimAssistVertical = {Enabled = true}
@@ -508,7 +508,7 @@ run(function()
                     Name = 'Range',
                     Min = 1,
                     Max = 30,
-                    Default = 50
+                    Default = 30
                 })
                 AimAssistSmoothness = AimAssist:CreateSlider({
                     Name = 'Smoothness',
@@ -542,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1 / ((first or store.hand.Type == 'sword') and 13.8 or AutoClickerCPS.Value))
+                            task.wait(1 / ((first or store.hand.Type == 'sword') and 7 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if not isNotHoveringOverGui() then continue end
@@ -585,7 +585,7 @@ run(function()
                 AutoClickerCPS = AutoClicker:CreateSlider({
                     Name = 'CPS',
                     Min = 1,
-                    Max = 500000000,
+                    Max = 12,
                     Default = 12
                 })
                 AutoClickerBlocks = AutoClicker:CreateToggle({
@@ -653,7 +653,7 @@ run(function()
                 local VelocityHorizontal = {Value = 100}
                 local VelocityVertical = {Value = 100}
                 local VelocityChance = {Value = 100}
-                local VelocityDelayValue = {Value = 100}
+                local VelocityDelayValue = {Value = 0}
                 local VelocityDelay = {Enabled = false}
                 local VelocityTargeting = {Enabled = false}
                 local velorand = Random.new()
@@ -668,8 +668,8 @@ run(function()
                                 if velorand:NextNumber(0, 100) > VelocityChance.Value then return end
                                 knockback = knockback or {}
                                 if VelocityHorizontal.Value == 0 and VelocityVertical.Value == 0 then return end
-                                knockback.horizontal = (knockback.horizontal or 1) * 0.5 (VelocityHorizontal.Value / 100)
-                                knockback.vertical = (knockback.vertical or 1) * 0.5 (VelocityVertical.Value / 100)
+                                knockback.horizontal = (knockback.horizontal or 1) * (VelocityHorizontal.Value / 100)
+                                knockback.vertical = (knockback.vertical or 1) * (VelocityVertical.Value / 100)
                                 return applyKnockback(root, mass, dir, knockback, ...)
                             end
                         else
