@@ -542,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1 / ((first or store.hand.Type == 'sword') and 0 or AutoClickerCPS.Value))
+                            task.wait(1 / ((first or store.hand.Type == 'sword') and 2147483647 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if not isNotHoveringOverGui() then continue end
@@ -585,7 +585,7 @@ run(function()
                 AutoClickerCPS = AutoClicker:CreateSlider({
                     Name = 'CPS',
                     Min = 1,
-                    Max = 10000000000000000000000000000000000,
+                    Max = 2147483647,
                     Default = 12
                 })
                 AutoClickerBlocks = AutoClicker:CreateToggle({
