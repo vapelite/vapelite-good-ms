@@ -542,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1 / and 7 or AutoClickerCPS.Value))
+                            task.wait(1 / and 0.000000000000000000000000000000000000000000000000000000001 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then continue end
