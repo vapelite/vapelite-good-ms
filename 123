@@ -542,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1 / and 7.70 or AutoClickerCPS.Value))
+                            task.wait(1 / and 7 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then continue end
@@ -755,8 +755,8 @@ run(function()
                 KillauraAttackRange = Killaura:CreateSlider({
                     Name = 'Attack range',
                     Min = 1,
-                    Max = 22,
-                    Default = 22
+                    Max = 13.6,
+                    Default = 12
                 })
                 KillauraAngle = Killaura:CreateSlider({
                     Name = 'Max angle',
