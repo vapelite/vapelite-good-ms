@@ -542,10 +542,9 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1.09 / ((first or store.hand.Type == 'sword') and 7.70 or AutoClickerCPS.Value))
+                            task.wait(1 / and 7.70 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
-                            if not isNotHoveringOverGui() then continue end
                             if bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then continue end
                             if store.hand.Type == 'block' and AutoClickerBlocks.Enabled and bedwars.BlockPlacementController.blockPlacer then
                                 if (workspace:GetServerTimeNow() - bedwars.BlockCpsController.lastPlaceTimestamp) >= ((1 / 12) * 0.5) then
