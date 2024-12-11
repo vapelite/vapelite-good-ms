@@ -477,116 +477,72 @@ run(function()
                 Combat
             ]]
 
-            run(function()
-                local AimAssist = {Enabled = false}
-                local AimAssistRange = {Value = 30}
-                local AimAssistSmoothness = {Value = 1}
-                local AimAssistActive = {Enabled = false}
-                local AimAssistVertical = {Enabled = true}
-                local StickyTarget = nil -- Holds the current locked-on target
+           run(function()
+    local AimAssist = {Enabled = false}
+    local AimAssistRange = {Value = 30}
+    local AimAssistSmoothness = {Value = 1}
+    local AimAssistActive = {Enabled = false}
+    local AimAssistVertical = {Enabled = true}
+    local StickyTarget = nil -- Holds the current locked-on target
 
-                AimAssist = vapelite:CreateModule({
-                    Name = 'AimAssist',
-                    Function = function(callback)
-                        if callback then
-                            table.insert(AimAssist.Connections, runService.RenderStepped:Connect(function(delta)
-                                if store.hand.Type == 'sword' and (AimAssistActive.Enabled or (tick() - bedwars.SwordController.lastSwing) < 0.2) then
-                                    -- Maintain sticky target if valid
-                                    if StickyTarget and StickyTarget.Parent then
-                                        local targetPos, isVisible = gameCamera:WorldToViewportPoint(StickyTarget.RootPart.Position)
-                                        if isVisible and isrbxactive() then
-                                            local aimAdjustment = (Vector2.new(targetPos.X, targetPos.Y) - inputService:GetMouseLocation()) 
-                                                * ((100 - AimAssistSmoothness.Value) * delta / 3)
-                                            mousemoverel(aimAdjustment.X, AimAssistVertical.Enabled and aimAdjustment.Y or 0)
-                                            return
-                                        end
-                                    else
-                                        StickyTarget = nil -- Clear sticky target if it becomes invalid
-                                    end
-
-                                    -- Find a new target if no sticky target exists
-                                    if not StickyTarget then
-                                        local plr = getEntitiesNear(AimAssistRange.Value)
-                                        if plr and not bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then
-                                            local pos, vis = gameCamera:WorldToViewportPoint(plr.RootPart.Position)
-                                            if vis and isrbxactive() then
-                                                StickyTarget = plr -- Lock onto the new target
-                                                local posAdjustment = (Vector2.new(pos.X, pos.Y) - inputService:GetMouseLocation()) 
-                                                    * ((100 - AimAssistSmoothness.Value) * delta / 3)
-                                                mousemoverel(posAdjustment.X, AimAssistVertical.Enabled and posAdjustment.Y or 0)
-                                            end
-                                        end
-                                    end
-                                end
-                            end))
+    AimAssist = vapelite:CreateModule({
+        Name = 'AimAssist',
+        Function = function(callback)
+            if callback then
+                table.insert(AimAssist.Connections, runService.RenderStepped:Connect(function(delta)
+                    if store.hand.Type == 'sword' and (AimAssistActive.Enabled or (tick() - bedwars.SwordController.lastSwing) < 0.2) then
+                        -- Check if StickyTarget is valid
+                        if StickyTarget and StickyTarget.Parent and (StickyTarget:FindFirstChild("RootPart")) then
+                            local targetPos, isVisible = gameCamera:WorldToViewportPoint(StickyTarget.RootPart.Position)
+                            if isVisible and isrbxactive() then
+                                local aimAdjustment = (Vector2.new(targetPos.X, targetPos.Y) - inputService:GetMouseLocation()) 
+                                    * ((100 - AimAssistSmoothness.Value) * delta / 3)
+                                mousemoverel(aimAdjustment.X, AimAssistVertical.Enabled and aimAdjustment.Y or 0)
+                                return -- Stay locked on this target; don't switch
+                            end
                         else
-                            -- Clear sticky target if AimAssist is disabled
+                            -- Clear StickyTarget if it becomes invalid
                             StickyTarget = nil
                         end
-                    end,
-                    Tooltip = 'Helps you aim at the enemy with sticky targeting'
-                })
-                AimAssistRange = AimAssist:CreateSlider({
-                    Name = 'Range',
-                    Min = 1,
-                    Max = 30,
-                    Default = 30
-                })
-                AimAssistSmoothness = AimAssist:CreateSlider({
-                    Name = 'Smoothness',
-                    Min = 1,
-                    Max = 100,
-                    Default = 70
-                })
-                AimAssistActive = AimAssist:CreateToggle({Name = 'Always active'})
-                AimAssistVertical = AimAssist:CreateToggle({Name = 'Vertical aim'})
-            end)
 
-
-            run(function()
-                local AutoClicker = {Enabled = false}
-                local AutoClickerCPS = {GetRandomValue = function() return 1 end}
-                local AutoClickerBlocks = {Enabled = false}
-                local AutoClickerThread
-
-                local function isNotHoveringOverGui()
-                    local mousepos = inputService:GetMouseLocation() - Vector2.new(0, 36)
-                    for _, v in lplr.PlayerGui:GetGuiObjectsAtPosition(mousepos.X, mousepos.Y) do
-                        if v.Active then return false end
-                    end
-                    for _, v in coreGui:GetGuiObjectsAtPosition(mousepos.X, mousepos.Y) do
-                        if v.Parent:IsA('ScreenGui') and v.Parent.Enabled and v.Active then return false end
-                    end
-                    return true
-                end
-
-                local function AutoClick()
-                    if AutoClickerThread then task.cancel(AutoClickerThread) end
-                    AutoClickerThread = task.spawn(function()
-                        local first = true
-                        repeat
-                            task.wait(1 / ((first or store.hand.Type == 'sword') and 7 or AutoClickerCPS.Value))
-                            first = false
-                            if not AutoClicker.Enabled then break end
-                            if not isNotHoveringOverGui() then continue end
-                            if bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then continue end
-                            if store.hand.Type == 'block' and AutoClickerBlocks.Enabled and bedwars.BlockPlacementController.blockPlacer then
-                                if (workspace:GetServerTimeNow() - bedwars.BlockCpsController.lastPlaceTimestamp) >= ((1 / 12) * 0.5) then
-                                    local mouseinfo = bedwars.BlockPlacementController.blockPlacer.clientManager:getBlockSelector():getMouseInfo(0)
-                                    if mouseinfo then
-                                        task.spawn(function()
-                                            if mouseinfo.placementPosition == mouseinfo.placementPosition then
-                                                bedwars.BlockPlacementController.blockPlacer:placeBlock(mouseinfo.placementPosition)
-                                            end
-                                        end)
-                                    end
+                        -- If no valid StickyTarget, find a new one
+                        if not StickyTarget then
+                            local plr = getEntitiesNear(AimAssistRange.Value)
+                            if plr and not bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then
+                                local pos, vis = gameCamera:WorldToViewportPoint(plr.RootPart.Position)
+                                if vis and isrbxactive() then
+                                    StickyTarget = plr -- Lock onto the new target
+                                    local posAdjustment = (Vector2.new(pos.X, pos.Y) - inputService:GetMouseLocation()) 
+                                        * ((100 - AimAssistSmoothness.Value) * delta / 3)
+                                    mousemoverel(posAdjustment.X, AimAssistVertical.Enabled and posAdjustment.Y or 0)
                                 end
-                            elseif store.hand.Type == 'sword' and bedwars.DaoController.chargingMaid == nil then
-                                bedwars.SwordController:swingSwordAtMouse()
                             end
-                        until false
-                    end)
-                end
+                        end
+                    end
+                end))
+            else
+                -- Clear StickyTarget when AimAssist is disabled
+                StickyTarget = nil
+            end
+        end,
+        Tooltip = 'Helps you aim at the enemy with sticky targeting'
+    })
+
+    AimAssistRange = AimAssist:CreateSlider({
+        Name = 'Range',
+        Min = 1,
+        Max = 30,
+        Default = 30
+    })
+    AimAssistSmoothness = AimAssist:CreateSlider({
+        Name = 'Smoothness',
+        Min = 1,
+        Max = 100,
+        Default = 70
+    })
+    AimAssistActive = AimAssist:CreateToggle({Name = 'Always active'})
+    AimAssistVertical = AimAssist:CreateToggle({Name = 'Vertical aim'})
+end)
 
                 AutoClicker = vapelite:CreateModule({
                     Name = 'AutoClicker',
