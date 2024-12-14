@@ -473,7 +473,7 @@ run(function()
                 end})
             end)
 
-            --[[
+           --[[
                 Combat
             ]]
 
@@ -483,6 +483,7 @@ run(function()
     local AimAssistSmoothness = {Value = 1}
     local AimAssistActive = {Enabled = false}
     local AimAssistVertical = {Enabled = true}
+    local AimAssistAngle = {Value = 90} -- New slider for angle control
     local StickyTarget = nil -- Holds the current locked-on target
 
     AimAssist = vapelite:CreateModule({
@@ -509,6 +510,12 @@ run(function()
                         if not StickyTarget then
                             local plr = getEntitiesNear(AimAssistRange.Value)
                             if plr and not bedwars.AppController:isLayerOpen(bedwars.UILayers.MAIN) then
+                                local selfrootpos = entitylib.character.RootPart.Position
+                                local localfacing = entitylib.character.RootPart.CFrame.LookVector
+                                local delta = (plr.RootPart.Position - selfrootpos)
+                                local angle = math.acos(localfacing:Dot((delta * Vector3.new(1, 0, 1)).Unit))
+                                if angle > (math.rad(AimAssistAngle.Value) / 2) then return end
+
                                 local pos, vis = gameCamera:WorldToViewportPoint(plr.RootPart.Position)
                                 if vis and isrbxactive() then
                                     StickyTarget = plr -- Lock onto the new target
@@ -540,9 +547,45 @@ run(function()
         Max = 100,
         Default = 70
     })
+    AimAssistAngle = AimAssist:CreateSlider({
+        Name = 'Max angle',
+        Min = 1,
+        Max = 360,
+        Default = 90
+    })
     AimAssistActive = AimAssist:CreateToggle({Name = 'Always active'})
     AimAssistVertical = AimAssist:CreateToggle({Name = 'Vertical aim'})
 end)
+
+                AutoClicker = vapelite:CreateModule({
+                    Name = 'AutoClicker',
+                    Function = function(callback)
+                        if callback then
+                            table.insert(AutoClicker.Connections, inputService.InputBegan:Connect(function(input, gameProcessed)
+                                if input.UserInputType == Enum.UserInputType.MouseButton1 then AutoClick() end
+                            end))
+                            table.insert(AutoClicker.Connections, inputService.InputEnded:Connect(function(input)
+                                if input.UserInputType == Enum.UserInputType.MouseButton1 and AutoClickerThread then
+                                    task.cancel(AutoClickerThread)
+                                    AutoClickerThread = nil
+                                end
+                            end))
+                        end
+                    end,
+                    Tooltip = 'Hold attack button to automatically click'
+                })
+                AutoClickerCPS = AutoClicker:CreateSlider({
+                    Name = 'CPS',
+                    Min = 1,
+                    Max = 999999999,
+                    Default = 12
+                })
+                AutoClickerBlocks = AutoClicker:CreateToggle({
+                    Name = 'Place Blocks',
+                    Default = true
+                })
+            end)
+
 
                 AutoClicker = vapelite:CreateModule({
                     Name = 'AutoClicker',
