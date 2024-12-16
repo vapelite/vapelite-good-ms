@@ -26,7 +26,6 @@ local args = {
 -- Fire the SwordHit event with the updated arguments
 game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("SwordHit"):FireServer(unpack(args))
 
-
 --[[
     The rewritten bedwars script :), still full of bad code. I've tried but some parts still look bad ;-;
     lite edition!
