@@ -1,31 +1,3 @@
--- Add the entity library definition at the start
-local entityLibrary = {}
-
--- Add the bounty_hunter entity to the library
-entityLibrary["bounty_hunter"] = workspace:WaitForChild("bounty_hunter")
-
--- Now define the args
-local args = {
-    [1] = {
-        ["chargedAttack"] = {
-            ["chargeRatio"] = 0
-        },
-        ["entityInstance"] = entityLibrary["bounty_hunter"],  -- Use the entity from the library
-        ["validate"] = {
-            ["selfPosition"] = {
-                ["value"] = Vector3.new(281.2688293457031, 79.4999771118164, 382.376220703125)
-            },
-            ["targetPosition"] = {
-                ["value"] = Vector3.new(283.5, 79.19999694824219, 388.5)
-            }
-        },
-        ["weapon"] = game:GetService("ReplicatedStorage"):WaitForChild("Inventories"):WaitForChild("Bolts123abc"):WaitForChild("diamond_sword")
-    }
-}
-
--- Fire the SwordHit event with the updated arguments
-game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("SwordHit"):FireServer(unpack(args))
-
 --[[
     The rewritten bedwars script :), still full of bad code. I've tried but some parts still look bad ;-;
     lite edition!
@@ -570,7 +542,7 @@ run(function()
                     AutoClickerThread = task.spawn(function()
                         local first = true
                         repeat
-                            task.wait(1 / ((first or store.hand.Type == 'sword') and 100 or AutoClickerCPS.Value))
+                            task.wait(1 / ((first or store.hand.Type == 'sword') and 7.13 or AutoClickerCPS.Value))
                             first = false
                             if not AutoClicker.Enabled then break end
                             if not isNotHoveringOverGui() then continue end
@@ -613,7 +585,7 @@ run(function()
                 AutoClickerCPS = AutoClicker:CreateSlider({
                     Name = 'CPS',
                     Min = 1,
-                    Max = 99999999,
+                    Max = 120000000000000000000000000000000000000000000000000000000000000000000000000000000000,
                     Default = 12
                 })
                 AutoClickerBlocks = AutoClicker:CreateToggle({
